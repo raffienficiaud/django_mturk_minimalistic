@@ -1,0 +1,10 @@
+{% load static %}
+this is it <br>
+
+
+
+{% for imobj in images_list %}
+  <img src="{% get_media_prefix %}{{imobj.im}}">
+{% empty %}
+  Image list is empty!
+{% endfor %}
