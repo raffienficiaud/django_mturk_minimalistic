@@ -1,5 +1,5 @@
 """
-Django settings for testdjango project.
+Django settings for minimalistic_mturk project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -56,9 +56,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'testdjango.urls'
+ROOT_URLCONF = 'minimalistic_mturk.urls'
 
-WSGI_APPLICATION = 'testdjango.wsgi.application'
+WSGI_APPLICATION = 'minimalistic_mturk.wsgi.application'
 
 
 # Database
