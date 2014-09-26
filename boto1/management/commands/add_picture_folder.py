@@ -33,6 +33,7 @@ class Command(BaseCommand):
     
     add_image_count = 0
     current_directory = options['directory']
+    current_directory = unicode(current_directory)
       
     if options['root_directory']:
       root_dir = options['root_directory']
@@ -40,18 +41,24 @@ class Command(BaseCommand):
       root_dir = current_directory
     
     for root, dirs, files in os.walk(current_directory):
-      print '- adding content from directory', root, ' --- #files %d / #MB %.2f' % \
-        (len(files), sum(getsize(join(root, name)) for name in files)/(1024*1024))
+      
+      self.stdout.write('- adding content from directory %s --- #files %d / #MB %.2f' % \
+        (root,
+         len(files), 
+         sum(getsize(join(root, name)) for name in files)/(1024*1024)))
     
       for name in files:
         if not os.path.splitext(name)[1].lower() in image_ext:
-          self.stdout.write('  skipping file %s' % join(root, name))
+          try:
+            pass
+            #self.stdout.write('  skipping file %s' % join(root, name))
+          except Exception, e:
+            print repr(e)
           continue
         
         fullpath = join(root, name)
       
         current_im_filename = os.path.relpath(fullpath, root_dir)
-        print current_im_filename
         try:
           current_im = Image.objects.create(im = File(open(fullpath)), name = current_im_filename)
         except Exception, e:
@@ -61,6 +68,7 @@ class Command(BaseCommand):
   
         current_im.save()
         add_image_count += 1
+        self.stdout.write(' + %s' % current_im.name)
   
     self.stdout.write('Successfully added directory "%s" content to the database' % current_directory)
     self.stdout.write('- New images added %d' % add_image_count)
