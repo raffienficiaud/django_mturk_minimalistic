@@ -16,8 +16,8 @@ def get_connection():
   
   if _mturk_connexion is None:
     _mturk_connexion = boto.mturk.connection.MTurkConnection(
-       aws_access_key_id="AKIAITBMHFHZM4AT6WSQ", 
-       aws_secret_access_key='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', 
+       aws_access_key_id="my_secret", 
+       aws_secret_access_key='my_secret_key', 
        debug=True, 
        host='mechanicalturk.sandbox.amazonaws.com')
   
