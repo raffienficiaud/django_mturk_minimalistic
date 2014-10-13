@@ -1,5 +1,5 @@
-Django Mechanical Turk External Question minimalistic example
-=============================================================
+Django Amazon Mechanical Turk External Question minimalistic example
+====================================================================
 
 This is a super small project on how to use Django to show and manage external question for the Amazon Mechanical Turk. 
 
