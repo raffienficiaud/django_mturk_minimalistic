@@ -36,7 +36,7 @@ def create_external_question_hit(title, url):
 
 
 class Command(BaseCommand):
-  help = 'Synchronise the content not sent yet to Amazon'
+  help = 'Synchronize the content not sent yet to Amazon'
 
   option_list = BaseCommand.option_list + (
     make_option(
