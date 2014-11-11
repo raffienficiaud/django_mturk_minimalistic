@@ -28,7 +28,7 @@ def create_external_question_hit(title, url):
   new_hit = get_connection().create_hit(
                 question=question, 
                 title=title, 
-                description="http django csrf disabled demo", 
+                description="http django", 
                 reward=0.02, 
                 keywords="image,processing,segmentation")
   
