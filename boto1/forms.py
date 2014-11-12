@@ -2,7 +2,7 @@
 from django import forms
 
 class FormAMT(forms.Form):
-    document = forms.CharField(
+    image_content = forms.CharField(
       widget = forms.Textarea,
       help_text='Please indicate what you see on the picture'
     )
