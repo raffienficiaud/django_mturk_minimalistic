@@ -13,7 +13,7 @@ class Image(models.Model):
 class Hit(models.Model):
   # an image corresponds to one hit
   image = models.ForeignKey(Image, related_name = 'hit')
-  hit_id= models.CharField(max_length = 50)
+  hit_id= models.CharField(max_length = 50, db_index = True, unique = True)
 
 class Result(models.Model):
   # the image on which this result applies
@@ -24,6 +24,6 @@ class Result(models.Model):
 
   #
   # Amazon related stuff
-  assignment_id = models.CharField(max_length = 50)
+  assignment_id = models.CharField(max_length = 50, db_index = True, unique = True)
   # the associated hit, if already processed
   hit   = models.ForeignKey(Hit, null = True)
