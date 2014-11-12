@@ -32,6 +32,7 @@ class ImageAnnotation(DetailView):
     context = super(ImageAnnotation, self).get_context_data(**kwargs)
     current_image = self.object # done in super
     
+    context['current_image'] = current_image
     context['assignmentid'] = self.request.GET.get('assignmentId', '')
     if(context['assignmentid'] == '' or context['assignmentid'] == 'ASSIGNMENT_ID_NOT_AVAILABLE'):
       context['is_demo'] = True
@@ -40,7 +41,6 @@ class ImageAnnotation(DetailView):
 
     context['amazon_url'] = self.request.GET.get('turkSubmitTo________', settings.MTURK_SUBMIT_URL)
     context['form'] = FormAMT(initial = {'assignmentId' : context['assignmentid'] })
-    #context['context'] = '%r' % context
     
     return context
   

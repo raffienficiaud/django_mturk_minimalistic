@@ -1,4 +1,4 @@
-
+{% load static %}
 <!DOCTYPE html>
 
 <html>
@@ -7,6 +7,10 @@
     </head>
 
     <body>
+
+
+<img src="{% get_media_prefix %}{{current_image.im}}" width="300px"></img>
+
 
 <form action="{{amazon_url}}" method="post">
   {{ form.as_p }}

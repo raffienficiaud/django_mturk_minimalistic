@@ -8,12 +8,16 @@ class Image(models.Model):
   im   = models.ImageField(upload_to='pictures', blank = False)
   
   def __unicode__(self):
-    return "%s | %s" % (self.name, self.im.url)
+    return "%.5d - %s" % (self.id, self.name)
 
 class Hit(models.Model):
   # an image corresponds to one hit
   image = models.ForeignKey(Image, related_name = 'hit')
-  hit_id= models.CharField(max_length = 50)
+  hit_id= models.CharField(max_length = 50, db_index = True, unique = True)
+
+  def __unicode__(self):
+    return "%-50s [%-50s]" % (self.hit_id, self.image.name)
+
 
 class Result(models.Model):
   # the image on which this result applies
@@ -24,6 +28,6 @@ class Result(models.Model):
 
   #
   # Amazon related stuff
-  assignment_id = models.CharField(max_length = 50)
+  assignment_id = models.CharField(max_length = 50, db_index = True, unique = True)
   # the associated hit, if already processed
   hit   = models.ForeignKey(Hit, null = True)
