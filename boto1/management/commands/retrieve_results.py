@@ -206,13 +206,7 @@ class Command(BaseCommand):
     # intersect with the set of hits for this application
     self.stdout.write('Intersecting with our content')
     my_application_hits = set((c.hit_id.upper().strip() for c in Hit.objects.all()))
-    self.stdout.write(' - \n'.join(my_application_hits))
-    self.stdout.write(' x \n'.join(all_hits_set)) 
-    self.stdout.write(' + \n'.join(review_set))     
-
-    self.stdout.write('\n\nblablabla')
-    self.stdout.write('\n b '.join(my_application_hits & all_hits_set))
-
+  
 
     all_hits_set.intersection_update(my_application_hits)
     review_set.intersection_update(my_application_hits)
@@ -221,16 +215,7 @@ class Command(BaseCommand):
     
     # already filled assignments
     assignments_id_already_set = set((c.assignment_id for c in Result.objects.all()))
-   
-    self.stdout.write('\n\nblablabla2')                                    
-    self.stdout.write('\n b '.join(assignments_id_already_set))   
-    #self.stdout.write(' - \n'.join(my_application_hits))      
-    self.stdout.write('\n\nblablabla3') 
-    self.stdout.write(' x \n'.join(all_hits_set))             
-    self.stdout.write('\n\nblablabla4') 
-    self.stdout.write(' + \n'.join(review_set))               
-
- 
+    
     # retrieving the responses
     responses = get_all_responses(review_hits, all_hits, assignments_id_already_set)
     
@@ -245,7 +230,7 @@ class Command(BaseCommand):
                                                      hit = current_hit,
                                                      assignment_id = assignment_id)
           
-          current_response.content = values
+          current_response.content = values['fields']
           current_response.save()
           nb_new_result_stored += 1
         except Exception, e:
@@ -258,29 +243,5 @@ class Command(BaseCommand):
     self.stdout.write('- Current number of results %d' % Result.objects.count())
 
     return
-
-    all_hits = get_all_hits()
-    review_hits = get_all_reviewable_hits()
-  
-    print "responses"
-    print responses
-    # does not support timedeltas
-    # print json.dumps(responses, indent=2, sort_keys=True) 
-    
-    
-    all_hit_set = set([h.HITId for h in all_hits])
-    
-    print 
-    print "all hits, #", len(list(all_hits))
-    self.print_hit_status(all_hits)
-    
-    open_hits = [h for h in all_hits if h.HITId in (all_hit_set - review_set)]
-    print 
-    print "list of open hits #", len(open_hits)
-    
-    self.print_hit_status(open_hits)
-    
-    
-    
 
     
