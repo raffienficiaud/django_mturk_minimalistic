@@ -40,16 +40,22 @@ class Command(BaseCommand):
 
   option_list = BaseCommand.option_list + (
     make_option(
-      '--careful',
-      dest='careful',
+      '--base_url',
+      dest='base_url',
       default=None,
       type='string',
-      help='checks for collisions, takes more time to complete'),
+      help='The base URL of the server'),
   )
 
   def handle(self, *args, **options):
     
     nb_hit_created = 0
+    
+    if options['base_url']:
+      root_url = options['base_url']
+    else:
+      raise RuntimeError('The base URL of the server should be set')
+    
     
     for image_object in Image.objects.filter(hit__isnull=False).distinct():
       self.stdout.write(' * %-50s %s' % (image_object.name, ' '.join(i.hit_id for i in image_object.hit.all())))
