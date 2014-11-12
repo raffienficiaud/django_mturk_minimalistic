@@ -24,8 +24,18 @@ The only dependencies are
 
 What does this application?
 ---------------------------
-The "app" starts by parsing a directory and retrieves all the images. These images are added into the database as primary source of information for creating the questions to the Amazon workers. 
 
-Then, the "HITS" are created. The HITS are external questions showing a specific URL on our app server. This URL is constructed in such a way that the image from which the hit is created is shown to the user. The HITS are also stored into the database to better track what is going on on the Amazon side.
+* The "app" starts by parsing a directory and retrieves all the images. These images are added into the database as primary source of information for creating the questions to the Amazon workers. 
+* Then, the "HITS" are created. The HITS are external questions showing a specific URL on our app server. This URL is constructed in such a way that the image from which the hit is created is shown to the user. The HITS are also stored into the database to better track what is going on on the Amazon side.
+* Finally, the results are taken back from Amazon. The content of the result is also stored into the database and bound to the HIT and the image on which it operates. 
 
-Finally, the results are taken back from Amazon and pushed into the database. 
+All these 3 commands are available from the command line, basically by doing
+```
+python manage.py command [options]
+```
+
+These commands are, respecitively to their description above:
+
+* `add_picture_folder`
+* `create_hits`
+* `retrieve_results`
