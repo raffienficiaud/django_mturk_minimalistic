@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.urlresolvers import reverse
 
-from boto1.models import Image, Hit
+from boto1.models import Image, Hit, Result
 from optparse import make_option
 
 
@@ -177,18 +177,19 @@ def get_all_responses(reviewable_hits, all_hits, assignments_to_skip = None):
       
   return responses
 
-def print_hit_status(hits):
-  """Prints the status of hits
-  
-  :param list hits: list of hits of interest
-  """
-  for hit in hits:
-    self.stdout.write("HIT id=%s status=%s created=%s UTC" % (hit.HITId, hit.HITStatus, from_w3c_to_datetime(hit.CreationTime)))
 
 
 class Command(BaseCommand):
   help = 'Retrieves the results from AMT'
 
+
+  def print_hit_status(self, hits):
+    """Prints the status of hits
+  
+    :param list hits: list of hits of interest
+    """
+    for hit in hits:
+      self.stdout.write("HIT id=%s status=%s created=%s UTC" % (hit.HITId, hit.HITStatus, from_w3c_to_datetime(hit.CreationTime)))
 
   def handle(self, *args, **options):
     
@@ -196,23 +197,40 @@ class Command(BaseCommand):
     
     self.stdout.write('Get all hits from Amazon')
     all_hits = get_all_hits()
-    all_hits_set = set((h.HITId for h in all_hits))
+    all_hits_set = set((h.HITId.upper().strip() for h in all_hits))
   
     self.stdout.write('Get all hits in review state')
     review_hits = get_all_reviewable_hits()
-    review_set = set((h.HITId for h in review_hits))
+    review_set = set((h.HITId.upper().strip() for h in review_hits))
     
     # intersect with the set of hits for this application
     self.stdout.write('Intersecting with our content')
-    my_application_hits = (c.hit_id for c in Hit.objects.all())
+    my_application_hits = set((c.hit_id.upper().strip() for c in Hit.objects.all()))
+    self.stdout.write(' - \n'.join(my_application_hits))
+    self.stdout.write(' x \n'.join(all_hits_set)) 
+    self.stdout.write(' + \n'.join(review_set))     
+
+    self.stdout.write('\n\nblablabla')
+    self.stdout.write('\n b '.join(my_application_hits & all_hits_set))
+
+
     all_hits_set.intersection_update(my_application_hits)
     review_set.intersection_update(my_application_hits)
-    all_hits = (a for a in all_hits if a.HITId in all_hits_set)
-    review_hits = (a for a in review_hits if a.HITId in review_set)
+    all_hits = [a for a in all_hits if a.HITId in all_hits_set]
+    review_hits = [a for a in review_hits if a.HITId in review_set]
     
     # already filled assignments
-    assignments_id_already_set = set((c.assignment_id for c in Response.object.all()))
-    
+    assignments_id_already_set = set((c.assignment_id for c in Result.objects.all()))
+   
+    self.stdout.write('\n\nblablabla2')                                    
+    self.stdout.write('\n b '.join(assignments_id_already_set))   
+    #self.stdout.write(' - \n'.join(my_application_hits))      
+    self.stdout.write('\n\nblablabla3') 
+    self.stdout.write(' x \n'.join(all_hits_set))             
+    self.stdout.write('\n\nblablabla4') 
+    self.stdout.write(' + \n'.join(review_set))               
+
+ 
     # retrieving the responses
     responses = get_all_responses(review_hits, all_hits, assignments_id_already_set)
     
@@ -223,7 +241,7 @@ class Command(BaseCommand):
       for assignment_id, values in dic_assignment.iteritems():
         
         try:
-          current_response = Response.objects.create(image = image_object, 
+          current_response = Result.objects.create(image = image_object, 
                                                      hit = current_hit,
                                                      assignment_id = assignment_id)
           
@@ -237,11 +255,13 @@ class Command(BaseCommand):
     
     self.stdout.write('Successfully retrieved results')
     self.stdout.write('- New results created %d' % nb_new_result_stored)
-    self.stdout.write('- Current number of results %d' % Response.objects.count())
+    self.stdout.write('- Current number of results %d' % Result.objects.count())
 
+    return
 
-
-    
+    all_hits = get_all_hits()
+    review_hits = get_all_reviewable_hits()
+  
     print "responses"
     print responses
     # does not support timedeltas
@@ -251,14 +271,14 @@ class Command(BaseCommand):
     all_hit_set = set([h.HITId for h in all_hits])
     
     print 
-    print "all hits, #", len(all_hits)
-    print_hit_status(all_hits)
+    print "all hits, #", len(list(all_hits))
+    self.print_hit_status(all_hits)
     
     open_hits = [h for h in all_hits if h.HITId in (all_hit_set - review_set)]
     print 
     print "list of open hits #", len(open_hits)
     
-    print_hit_status(open_hits)
+    self.print_hit_status(open_hits)
     
     
     

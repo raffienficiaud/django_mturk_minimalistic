@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 
 from boto1.models import Image, Hit
 from optparse import make_option
-
+import urlparse
 
 import boto
 import boto.mturk
@@ -52,21 +52,19 @@ class Command(BaseCommand):
     nb_hit_created = 0
     
     if options['base_url']:
-      root_url = options['base_url']
+      root_url = urlparse.urlparse(options['base_url'])
     else:
       raise RuntimeError('The base URL of the server should be set')
-    
     
     for image_object in Image.objects.filter(hit__isnull=False).distinct():
       self.stdout.write(' * %-50s %s' % (image_object.name, ' '.join(i.hit_id for i in image_object.hit.all())))
     
     images_to_sync = Image.objects.filter(hit__isnull=True).distinct()
     for image_object in images_to_sync:
-  
+      url_image = urlparse.urlunparse((root_url.scheme, root_url.netloc, root_url.path.rstrip('/') + reverse('image_annotation_form', args=[image_object.id]), '','',''))  
       new_hit = create_external_question_hit(
                   'botox', 
-                  reverse('image_annotation_form', args=[image_object.id]))
-      
+                  url_image)     
       try:
         current_hit = Hit.objects.create(image = image_object, hit_id = new_hit[0].HITId)
       except Exception, e:
